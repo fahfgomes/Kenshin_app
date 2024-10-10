@@ -6,6 +6,7 @@ from datetime import datetime, timedelta
 from flet import *
 
 
+
 # Função para enviar localização e confirmar presença
 def enviar_localizacao(page, lat, lon):
     url = "http://localhost:5000/confirmar-presenca"
@@ -207,6 +208,8 @@ def apostila_page(page):
 def abrir_apostila():
     import webbrowser
     webbrowser.open("https://www.judokenshin-osasco.com.br/apostila.pdf")
+
+
 def editar_perfil_page(page):
     page.controls.clear()
     
@@ -217,13 +220,13 @@ def editar_perfil_page(page):
         label="Faixa",
         value="Faixa Amarela",
         options=[
-            ft.DropdownOption("Faixa Branca"),
-            ft.DropdownOption("Faixa Amarela"),
-            ft.DropdownOption("Faixa Laranja"),
-            ft.DropdownOption("Faixa Verde"),
-            ft.DropdownOption("Faixa Azul"),
-            ft.DropdownOption("Faixa Marrom"),
-            ft.DropdownOption("Faixa Preta"),
+            ft.dropdown.Option("Faixa Branca"),
+            ft.dropdown.Option("Faixa Amarela"),
+            ft.dropdown.Option("Faixa Laranja"),
+            ft.dropdown.Option("Faixa Verde"),
+            ft.dropdown.Option("Faixa Azul"),
+            ft.dropdown.Option("Faixa Marrom"),
+            ft.dropdown.Option("Faixa Preta"),
         ]
     )
     
@@ -237,8 +240,7 @@ def editar_perfil_page(page):
                 email_input,
                 faixa_input,
             ],
-            spacing=10,
-            padding=ft.padding.all(10)
+            spacing=10
         ),
         ft.ElevatedButton("Salvar", on_click=lambda _: salvar_perfil(nome_input.value, email_input.value, faixa_input.value, page)),
         ft.ElevatedButton("Cancelar", on_click=lambda _: perfil_page(page))
@@ -269,7 +271,6 @@ def perfil_page(page):
                 ft.Text(f"Faixa: {aluno_curso}", size=16),
             ],
             spacing=10,
-            padding=ft.padding.all(10)
         ),
         ft.ElevatedButton("Editar Perfil", on_click=lambda _: editar_perfil_page(page)),
         ft.ElevatedButton("Voltar", on_click=lambda _: home_page(page))
@@ -293,8 +294,7 @@ def alterar_senha_page(page):
                 nova_senha_input,
                 confirmar_senha_input,
             ],
-            spacing=10,
-            padding=ft.padding.all(10)
+            spacing=10
         ),
         ft.ElevatedButton("Salvar", on_click=lambda _: salvar_senha(senha_atual_input.value, nova_senha_input.value, confirmar_senha_input.value, page)),
         ft.ElevatedButton("Cancelar", on_click=lambda _: configuracoes_page(page))
@@ -323,7 +323,6 @@ def eventos_page(page):
                 ft.Text("25/12/2024 - Festa de Confraternização", size=16),
             ],
             spacing=10,
-            padding=ft.padding.all(10)
         ),
         ft.ElevatedButton("Voltar", on_click=lambda _: home_page(page))
     )
@@ -341,8 +340,7 @@ def configuracoes_page(page):
                 ft.Switch(label="Modo Escuro", value=False),
                 ft.ElevatedButton("Alterar Senha", on_click=lambda _: alterar_senha_page(page)),
             ],
-            spacing=10,
-            padding=ft.padding.all(10)
+            spacing=10
         ),
         ft.ElevatedButton("Voltar", on_click=lambda _: home_page(page))
     )
@@ -449,32 +447,62 @@ def home_page(page):
 
 
     # Barra de navegação na parte inferior
-    navbar = ft.Container(
-        content=ft.Row(
-        [
-            ft.Row([
-                ft.IconButton(icon=ft.icons.HOME, selected=True),
-                ft.Text("Início", color=ft.colors.BLUE_GREY),
-            ]),
-            ft.Row([
-                ft.IconButton(icon=ft.icons.PERSON, on_click=lambda _: perfil_page(page)),
-                ft.Text("Perfil", color=ft.colors.BLUE_GREY),
-            ]),
-            ft.Row([
-                ft.IconButton(icon=ft.icons.EVENT, on_click=lambda _: eventos_page(page)),
-                ft.Text("Eventos", color=ft.colors.BLUE_GREY),
-            ]),
-            ft.Row([
-                ft.IconButton(icon=ft.icons.SETTINGS, on_click=lambda _: configuracoes_page(page)),
-                ft.Text("Configurações", color=ft.colors.BLUE_GREY),
-            ]),
-        ],
-        alignment=ft.MainAxisAlignment.SPACE_AROUND,
-        ),
-        padding=ft.padding.symmetric(vertical=10),  # Aplica padding ao container
-        bgcolor=ft.colors.LIGHT_BLUE_100
+    # navbar = ft.Container(
+    #     content=ft.Row(
+    #     [
+    #         ft.Row([
+    #             ft.IconButton(icon=ft.icons.HOME, selected=True),
+    #             ft.Text("Início", color=ft.colors.BLUE_GREY),
+    #         ]),
+    #         ft.Row([
+    #             ft.IconButton(icon=ft.icons.PERSON, on_click=lambda _: perfil_page(page)),
+    #             ft.Text("Perfil", color=ft.colors.BLUE_GREY),
+    #         ]),
+    #         ft.Row([
+    #             ft.IconButton(icon=ft.icons.EVENT, on_click=lambda _: eventos_page(page)),
+    #             ft.Text("Eventos", color=ft.colors.BLUE_GREY),
+    #         ]),
+    #         ft.Row([
+    #             ft.IconButton(icon=ft.icons.SETTINGS, on_click=lambda _: configuracoes_page(page)),
+    #             ft.Text("Configurações", color=ft.colors.BLUE_GREY),
+    #         ]),
+    #     ],
+    #     alignment=ft.MainAxisAlignment.SPACE_AROUND,
+    #     ),
+    #     padding=ft.padding.symmetric(vertical=10),  # Aplica padding ao container
+    #     bgcolor=ft.colors.LIGHT_BLUE_100
+    # )
+    
+    def mudar_aba(index):
+        page.clean()  # Limpa a página atual
+        if index == 0:
+            page.add(
+        menu_button, 
+        menu_container,
+        header,
+        ft.Divider(height=1, color=ft.colors.GREY_300),
+        conteudo,  # Seção de notícias e vídeos
+        navbar # Navbar na parte inferior
     )
+        elif index == 1:
+            perfil_page(page)
+        elif index == 2:
+           eventos_page(page)
+        elif index == 3:
+            configuracoes_page(page)
 
+    navbar =  ft.NavigationBar(
+        destinations=[
+            ft.NavigationBarDestination(icon=ft.icons.HOME, label="Inicio", selected_icon=True),
+            ft.NavigationBarDestination(icon=ft.icons.PERSON, label="Perfil"),
+            ft.NavigationBarDestination(icon=ft.icons.EVENT, label="Eventos"),
+            ft.NavigationBarDestination(icon=ft.icons.SETTINGS, label="Configurações"),
+        ],
+        border=ft.Border(
+            top=ft.BorderSide(color=ft.cupertino_colors.SYSTEM_GREY2, width=0)
+        ),
+        on_change=lambda e: mudar_aba(e.control.selected_index)
+    )
 
     # Adicionando todos os componentes à página
     page.add(
@@ -485,6 +513,7 @@ def home_page(page):
         conteudo,  # Seção de notícias e vídeos
         navbar # Navbar na parte inferior
     )
+    mudar_aba(0)
     page.update()
 
 
@@ -517,6 +546,7 @@ def login_page(page):
 
 # Função principal do app Flet
 def main(page: ft.Page):
+    page.adaptive = True
     page.title = "Confirmação de Presença - Academia de Judô"
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
